@@ -1,0 +1,47 @@
+{
+  "name": "zhubao-desktop-pet",
+  "version": "1.0.0",
+  "description": "A packagable, animated panda desktop companion.",
+  "main": "src/main.js",
+  "author": "Local desktop pet project",
+  "license": "MIT",
+  "scripts": {
+    "start": "electron .",
+    "dev": "electron . --dev",
+    "test": "node --test",
+    "smoke": "electron . --smoke-test",
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder --win nsis portable"
+  },
+  "devDependencies": {
+    "electron": "^38.1.0",
+    "electron-builder": "26.10.0"
+  },
+  "build": {
+    "appId": "com.local.zhubao",
+    "productName": "Zhubao Panda Pet",
+    "asar": true,
+    "electronDist": "node_modules/electron/dist",
+    "files": [
+      "src/**/*",
+      "app-assets/**/*",
+      "package.json"
+    ],
+    "directories": {
+      "output": "release"
+    },
+    "win": {
+      "signAndEditExecutable": false,
+      "target": [
+        "nsis",
+        "portable"
+      ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "shortcutName": "Zhubao Panda Pet"
+    }
+  }
+}

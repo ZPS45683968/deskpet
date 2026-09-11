@@ -1,0 +1,19 @@
+{
+  "ok": true,
+  "spriteVersionNumber": 2,
+  "run_dir": "D:/deskpets/assets/zhubao/hatch-run",
+  "spritesheet": "D:/deskpets/assets/zhubao/hatch-run/final/spritesheet-extended.webp",
+  "validation": "D:/deskpets/assets/zhubao/hatch-run/final/validation-extended.json",
+  "chroma_despill": "D:/deskpets/assets/zhubao/hatch-run/qa/chroma-despill-extended.json",
+  "contact_sheet": "D:/deskpets/assets/zhubao/hatch-run/qa/contact-sheet-extended.png",
+  "direction_sheet": "D:/deskpets/assets/zhubao/hatch-run/qa/look-directions.png",
+  "direction_semantics": "D:/deskpets/assets/zhubao/hatch-run/qa/direction-semantics.json",
+  "blind_direction_validation": "D:/deskpets/assets/zhubao/hatch-run/qa/direction-blind-validation.json",
+  "blind_review_resolution": null,
+  "continuity": "D:/deskpets/assets/zhubao/hatch-run/qa/look-continuity.json",
+  "continuity_review": "D:/deskpets/assets/zhubao/hatch-run/qa/look-continuity-review.json",
+  "review": "D:/deskpets/assets/zhubao/hatch-run/qa/review.json",
+  "final_visual_qa": "D:/deskpets/assets/zhubao/hatch-run/qa/final-visual-qa.json",
+  "project_local_pet_package": "D:/deskpets/assets/zhubao/package",
+  "desktop_app_assets": "D:/deskpets/app-assets"
+}

@@ -1,0 +1,100 @@
+{
+  "ok": true,
+  "source": "output/imagegen/panda-reminder-strip.png",
+  "frames": [
+    {
+      "frame": 0,
+      "bbox": [
+        34,
+        14,
+        157,
+        203
+      ]
+    },
+    {
+      "frame": 1,
+      "bbox": [
+        29,
+        9,
+        162,
+        202
+      ]
+    },
+    {
+      "frame": 2,
+      "bbox": [
+        24,
+        8,
+        167,
+        202
+      ]
+    },
+    {
+      "frame": 3,
+      "bbox": [
+        21,
+        5,
+        170,
+        202
+      ]
+    },
+    {
+      "frame": 4,
+      "bbox": [
+        26,
+        10,
+        165,
+        202
+      ]
+    },
+    {
+      "frame": 5,
+      "bbox": [
+        30,
+        13,
+        160,
+        202
+      ]
+    },
+    {
+      "frame": 6,
+      "bbox": [
+        34,
+        14,
+        157,
+        203
+      ]
+    },
+    {
+      "frame": 7,
+      "bbox": [
+        34,
+        15,
+        157,
+        203
+      ]
+    }
+  ],
+  "despill": {
+    "algorithm": "edge-local-chroma-spill-suppression",
+    "strength": 1,
+    "edge_radius": 5,
+    "spill_tolerance": 0.15,
+    "minimum_saturation": 0.1,
+    "changed_pixels": 15649,
+    "decontaminated_pixels": 12430,
+    "spill_suppressed_pixels": 15649,
+    "rejected_pixels": 0,
+    "changed_by_cell": {
+      "r0c3": 2239,
+      "r0c2": 1983,
+      "r0c6": 1948,
+      "r0c0": 1932,
+      "r0c1": 1907,
+      "r0c7": 1891,
+      "r0c5": 1890,
+      "r0c4": 1859
+    },
+    "alpha_preserved": true
+  }
+}

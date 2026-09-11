@@ -1,0 +1,14 @@
+{
+  "verdict": "pass",
+  "reviewed_at_normal_size": true,
+  "alpha_hole_warnings": {
+    "severity": "minor-metric-warning",
+    "resolution": "accepted",
+    "evidence": "The flagged top rows are transparent space between the round ears and outside the head silhouette; the flagged bottom rows are transparent space between or beside the feet. The labeled direction sheet shows no transparent band, seam, scanline, or see-through hole inside the filled head, torso, arms, or legs."
+  },
+  "diff_outlier_warnings": {
+    "severity": "minor-metric-warning",
+    "resolution": "accepted",
+    "evidence": "The 157.5->180, 247.5->270, and 337.5->000 pairs change head profile and visible white-body area, but the normal-size ordered sheet shows stable feet, seated baseline, scale, bamboo attachment, and clockwise semantics with no visible snap, reversal, or identity change."
+  }
+}

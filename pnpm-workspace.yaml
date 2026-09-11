@@ -1,0 +1,5 @@
+allowBuilds:
+  electron: true
+  electron-winstaller: true
+patchedDependencies:
+  app-builder-lib@26.10.0: patches/app-builder-lib@26.10.0.patch

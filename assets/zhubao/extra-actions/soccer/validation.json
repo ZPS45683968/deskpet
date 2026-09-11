@@ -1,0 +1,100 @@
+{
+  "ok": true,
+  "source": "output/action-sources/soccer-strip.png",
+  "frames": [
+    {
+      "frame": 0,
+      "bbox": [
+        15,
+        11,
+        176,
+        197
+      ]
+    },
+    {
+      "frame": 1,
+      "bbox": [
+        19,
+        11,
+        173,
+        197
+      ]
+    },
+    {
+      "frame": 2,
+      "bbox": [
+        20,
+        11,
+        171,
+        197
+      ]
+    },
+    {
+      "frame": 3,
+      "bbox": [
+        21,
+        11,
+        171,
+        197
+      ]
+    },
+    {
+      "frame": 4,
+      "bbox": [
+        5,
+        11,
+        187,
+        197
+      ]
+    },
+    {
+      "frame": 5,
+      "bbox": [
+        24,
+        11,
+        168,
+        197
+      ]
+    },
+    {
+      "frame": 6,
+      "bbox": [
+        23,
+        11,
+        168,
+        197
+      ]
+    },
+    {
+      "frame": 7,
+      "bbox": [
+        15,
+        11,
+        177,
+        197
+      ]
+    }
+  ],
+  "despill": {
+    "algorithm": "edge-local-chroma-spill-suppression",
+    "strength": 1,
+    "edge_radius": 5,
+    "spill_tolerance": 0.15,
+    "minimum_saturation": 0.1,
+    "changed_pixels": 17715,
+    "decontaminated_pixels": 14369,
+    "spill_suppressed_pixels": 17715,
+    "rejected_pixels": 0,
+    "changed_by_cell": {
+      "r0c7": 2443,
+      "r0c0": 2401,
+      "r0c4": 2325,
+      "r0c1": 2284,
+      "r0c6": 2102,
+      "r0c2": 2092,
+      "r0c5": 2036,
+      "r0c3": 2032
+    },
+    "alpha_preserved": true
+  }
+}

@@ -1,0 +1,87 @@
+:root {
+  --cell-width: 192px;
+  --cell-height: 208px;
+}
+
+* { box-sizing: border-box; user-select: none; }
+html, body { width: 100%; height: 100%; margin: 0; overflow: hidden; background: transparent; }
+
+#pet-stage {
+  position: relative;
+  width: var(--cell-width);
+  height: var(--cell-height);
+  -webkit-app-region: no-drag;
+  cursor: grab;
+}
+
+#pet-stage.dragging { cursor: grabbing; }
+
+#sprite {
+  width: var(--cell-width);
+  height: var(--cell-height);
+  background-image: url('../app-assets/spritesheet.webp');
+  background-repeat: no-repeat;
+  image-rendering: auto;
+  pointer-events: auto;
+}
+
+.speech {
+  position: absolute;
+  z-index: 4;
+  top: 3px;
+  left: 50%;
+  max-width: 178px;
+  padding: 7px 10px;
+  border: 1px solid rgba(47, 77, 60, 0.15);
+  border-radius: 12px;
+  color: #263c30;
+  background: rgba(255, 253, 244, 0.95);
+  box-shadow: 0 5px 14px rgba(25, 45, 34, 0.18);
+  font: 12px/1.35 "Microsoft YaHei UI", sans-serif;
+  text-align: center;
+  opacity: 0;
+  transform: translate(-50%, -6px) scale(.96);
+  transition: opacity 150ms ease, transform 150ms ease;
+  pointer-events: none;
+}
+
+.speech.visible { opacity: 1; transform: translate(-50%, 0) scale(1); }
+.speech.memo-speech { width: 178px; max-height: 94px; overflow-y: auto; white-space: pre-wrap; overflow-wrap: anywhere; pointer-events: auto; text-align: left; user-select: text; }
+.dismiss-memo { display: block; position: sticky; bottom: 0; width: 100%; margin-top: 6px; padding: 5px; border: 0; border-radius: 6px; background: #38634c; color: white; font: inherit; cursor: pointer; }
+
+#menu-button {
+  position: absolute;
+  z-index: 5;
+  top: 5px;
+  right: 5px;
+  width: 28px;
+  height: 28px;
+  border: 1px solid rgba(255,255,255,.38);
+  border-radius: 50%;
+  color: #fff;
+  background: rgba(28, 58, 42, 0.58);
+  opacity: 0;
+  transition: opacity 120ms ease, transform 120ms ease;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+#menu-button:hover { transform: scale(1.08); }
+#pet-stage:hover #menu-button, #menu-button:focus-visible { opacity: 1; }
+
+#need-indicator {
+  position: absolute;
+  right: 10px;
+  bottom: 7px;
+  min-width: 28px;
+  padding: 4px 7px;
+  border-radius: 12px;
+  color: #fff;
+  text-align: center;
+  font: 700 11px/1 "Microsoft YaHei UI", sans-serif;
+  opacity: 0;
+  pointer-events: none;
+}
+
+#need-indicator.hungry { opacity: 1; background: rgba(82, 132, 83, .88); }
+#need-indicator.tired { opacity: 1; background: rgba(82, 89, 124, .84); }

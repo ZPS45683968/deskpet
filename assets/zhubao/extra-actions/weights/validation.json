@@ -1,0 +1,100 @@
+{
+  "ok": true,
+  "source": "output/imagegen/panda-weights-strip.png",
+  "frames": [
+    {
+      "frame": 0,
+      "bbox": [
+        31,
+        5,
+        160,
+        203
+      ]
+    },
+    {
+      "frame": 1,
+      "bbox": [
+        27,
+        5,
+        164,
+        203
+      ]
+    },
+    {
+      "frame": 2,
+      "bbox": [
+        26,
+        5,
+        165,
+        203
+      ]
+    },
+    {
+      "frame": 3,
+      "bbox": [
+        27,
+        5,
+        164,
+        203
+      ]
+    },
+    {
+      "frame": 4,
+      "bbox": [
+        27,
+        5,
+        164,
+        203
+      ]
+    },
+    {
+      "frame": 5,
+      "bbox": [
+        26,
+        5,
+        165,
+        203
+      ]
+    },
+    {
+      "frame": 6,
+      "bbox": [
+        26,
+        5,
+        164,
+        203
+      ]
+    },
+    {
+      "frame": 7,
+      "bbox": [
+        31,
+        5,
+        160,
+        203
+      ]
+    }
+  ],
+  "despill": {
+    "algorithm": "edge-local-chroma-spill-suppression",
+    "strength": 1,
+    "edge_radius": 5,
+    "spill_tolerance": 0.15,
+    "minimum_saturation": 0.1,
+    "changed_pixels": 17048,
+    "decontaminated_pixels": 13063,
+    "spill_suppressed_pixels": 17048,
+    "rejected_pixels": 0,
+    "changed_by_cell": {
+      "r0c1": 2205,
+      "r0c5": 2159,
+      "r0c6": 2156,
+      "r0c2": 2144,
+      "r0c7": 2131,
+      "r0c4": 2104,
+      "r0c0": 2087,
+      "r0c3": 2062
+    },
+    "alpha_preserved": true
+  }
+}

@@ -1,0 +1,44 @@
+diff --git a/out/util/electronGet.js b/out/util/electronGet.js
+index f9d814088a4da2868897aedb6d63f6bac7fbf4a5..f479e9e183f98b33ba3dd98fab2e4f70a7eed3f3 100644
+--- a/out/util/electronGet.js
++++ b/out/util/electronGet.js
+@@ -8,6 +8,15 @@ exports.downloadElectronArtifact = downloadElectronArtifact;
+ exports.getBinariesMirrorUrl = getBinariesMirrorUrl;
+ const get = require("@electron/get");
+ const get_1 = require("@electron/get");
++// @electron/get 3.0.0 accepts the numeric cacheMode option but does not
++// export the TypeScript enum at runtime. Keep the public numeric ordering
++// used by newer releases so electron-builder can remain compatible.
++const ElectronDownloadCacheMode = get_1.ElectronDownloadCacheMode || {
++    ReadWrite: 0,
++    ReadOnly: 1,
++    WriteOnly: 2,
++    Bypass: 3,
++};
+ const builder_util_1 = require("builder-util");
+ const multiProgress_1 = require("electron-publish/out/multiProgress");
+ const fs_1 = require("fs");
+@@ -55,12 +64,12 @@ function resolveCacheMode() {
+     var _a;
+     const varName = "ELECTRON_DOWNLOAD_CACHE_MODE";
+     const cacheOverride = (_a = process.env[varName]) === null || _a === void 0 ? void 0 : _a.trim();
+-    if (cacheOverride && Number(cacheOverride) in get_1.ElectronDownloadCacheMode) {
++    if (cacheOverride && Number(cacheOverride) in ElectronDownloadCacheMode) {
+         const mode = Number(cacheOverride);
+         builder_util_1.log.debug({ mode }, `cache mode overridden via env var ${varName}`);
+         return mode;
+     }
+-    return get_1.ElectronDownloadCacheMode.ReadWrite;
++    return ElectronDownloadCacheMode.ReadWrite;
+ }
+ async function extractZipStreaming(file, dir) {
+     var _a;
+@@ -178,7 +187,7 @@ async function downloadArtifactToFile(config, label) {
+         }
+         if (!(await (0, builder_util_1.exists)(filePath))) {
+             builder_util_1.log.warn({ filePath, label }, "cached artifact missing from disk; retrying with cache write");
+-            filePath = await get.downloadArtifact({ ...configWithProgress, cacheMode: get_1.ElectronDownloadCacheMode.WriteOnly });
++            filePath = await get.downloadArtifact({ ...configWithProgress, cacheMode: ElectronDownloadCacheMode.WriteOnly });
+         }
+         return filePath;
+     }

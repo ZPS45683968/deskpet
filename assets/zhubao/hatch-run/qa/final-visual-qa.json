@@ -1,0 +1,7 @@
+{
+  "visual_qa": "pass",
+  "qa_note": "Rows 0-8, the neutral pose, and all 16 look directions preserve Zhubao's identity, face, palette, proportions, bamboo, correct motion semantics, complete unclipped frames, and clean extended-sheet chroma.",
+  "review_warnings": ["112.5 subtle downward cue", "247.5 subtle downward cue"],
+  "repair_rows": [],
+  "repair_notes": null
+}

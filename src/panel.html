@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="light" />
+    <title>竹宝的小屋</title>
+    <link rel="stylesheet" href="panel.css" />
+  </head>
+  <body>
+    <header class="hero">
+      <div class="hero-leaf leaf-one">●</div>
+      <div class="hero-leaf leaf-two">●</div>
+      <div class="avatar" aria-hidden="true"></div>
+      <div class="identity">
+        <div class="eyebrow">你的桌面伙伴</div>
+        <div class="name-row"><h1 id="pet-name">竹宝</h1><span id="level-badge">Lv.1</span></div>
+        <div id="pet-status" class="status">状态很好</div>
+      </div>
+      <div class="coin"><span>🎍</span><strong id="coin-count">0</strong></div>
+    </header>
+
+    <nav id="tabs" aria-label="功能导航">
+      <button data-tab="home" class="active"><span>⌂</span>首页</button>
+      <button data-tab="bag"><span>▣</span>背包</button>
+      <button data-tab="shop"><span>◇</span>商店</button>
+      <button data-tab="tasks"><span>✓</span>任务</button>
+      <button data-tab="diary"><span>☷</span>日记</button>
+      <button data-tab="memos"><span>◷</span>备忘录</button>
+      <button data-tab="settings"><span>⚙</span>设置</button>
+    </nav>
+
+    <main id="content"><div class="loading">正在接竹宝回家……</div></main>
+    <div id="toast" role="status" aria-live="polite"></div>
+    <script src="panel.js"></script>
+  </body>
+</html>

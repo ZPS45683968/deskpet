@@ -1,0 +1,100 @@
+{
+  "ok": true,
+  "source": "output/imagegen/basketball-strip-source.png",
+  "frames": [
+    {
+      "frame": 0,
+      "bbox": [
+        47,
+        69,
+        145,
+        200
+      ]
+    },
+    {
+      "frame": 1,
+      "bbox": [
+        43,
+        71,
+        149,
+        200
+      ]
+    },
+    {
+      "frame": 2,
+      "bbox": [
+        46,
+        85,
+        146,
+        203
+      ]
+    },
+    {
+      "frame": 3,
+      "bbox": [
+        47,
+        70,
+        145,
+        200
+      ]
+    },
+    {
+      "frame": 4,
+      "bbox": [
+        50,
+        48,
+        142,
+        200
+      ]
+    },
+    {
+      "frame": 5,
+      "bbox": [
+        44,
+        5,
+        148,
+        192
+      ]
+    },
+    {
+      "frame": 6,
+      "bbox": [
+        44,
+        34,
+        148,
+        200
+      ]
+    },
+    {
+      "frame": 7,
+      "bbox": [
+        47,
+        69,
+        145,
+        200
+      ]
+    }
+  ],
+  "despill": {
+    "algorithm": "edge-local-chroma-spill-suppression",
+    "strength": 1,
+    "edge_radius": 5,
+    "spill_tolerance": 0.15,
+    "minimum_saturation": 0.1,
+    "changed_pixels": 9886,
+    "decontaminated_pixels": 8742,
+    "spill_suppressed_pixels": 9886,
+    "rejected_pixels": 0,
+    "changed_by_cell": {
+      "r0c5": 1495,
+      "r0c6": 1472,
+      "r0c1": 1243,
+      "r0c4": 1175,
+      "r0c3": 1146,
+      "r0c7": 1142,
+      "r0c0": 1130,
+      "r0c2": 1083
+    },
+    "alpha_preserved": true
+  }
+}

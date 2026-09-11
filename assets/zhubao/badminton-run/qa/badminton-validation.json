@@ -1,0 +1,97 @@
+{
+  "ok": true,
+  "source_png": "D:\\deskpets\\assets\\zhubao\\badminton-run\\final\\badminton.png",
+  "atlas": "D:\\deskpets\\app-assets\\badminton.webp",
+  "size": [
+    1536,
+    208
+  ],
+  "cell": [
+    192,
+    208
+  ],
+  "frames": [
+    {
+      "frame": 0,
+      "bbox": [
+        37,
+        82,
+        155,
+        203
+      ],
+      "edge_pixels": 0
+    },
+    {
+      "frame": 1,
+      "bbox": [
+        39,
+        57,
+        153,
+        203
+      ],
+      "edge_pixels": 0
+    },
+    {
+      "frame": 2,
+      "bbox": [
+        28,
+        57,
+        163,
+        203
+      ],
+      "edge_pixels": 0
+    },
+    {
+      "frame": 3,
+      "bbox": [
+        36,
+        5,
+        155,
+        195
+      ],
+      "edge_pixels": 0
+    },
+    {
+      "frame": 4,
+      "bbox": [
+        40,
+        18,
+        152,
+        198
+      ],
+      "edge_pixels": 0
+    },
+    {
+      "frame": 5,
+      "bbox": [
+        28,
+        57,
+        164,
+        199
+      ],
+      "edge_pixels": 0
+    },
+    {
+      "frame": 6,
+      "bbox": [
+        31,
+        100,
+        161,
+        203
+      ],
+      "edge_pixels": 0
+    },
+    {
+      "frame": 7,
+      "bbox": [
+        39,
+        82,
+        153,
+        203
+      ],
+      "edge_pixels": 0
+    }
+  ],
+  "preview": "D:\\deskpets\\assets\\zhubao\\badminton-run\\qa\\badminton.gif",
+  "contact_sheet": "D:\\deskpets\\assets\\zhubao\\badminton-run\\qa\\badminton-contact.png"
+}

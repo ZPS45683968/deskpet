@@ -1,0 +1,15 @@
+{
+  "ok": true,
+  "action": "badminton",
+  "frames": 8,
+  "cellWidth": 192,
+  "cellHeight": 208,
+  "atlas": "D:\\deskpets\\app-assets\\badminton.webp",
+  "preview": "D:\\deskpets\\assets\\zhubao\\badminton-run\\qa\\badminton.gif",
+  "contactSheet": "D:\\deskpets\\assets\\zhubao\\badminton-run\\qa\\badminton-contact.png",
+  "validation": "D:\\deskpets\\assets\\zhubao\\badminton-run\\qa\\badminton-validation.json",
+  "chromaDespill": "D:\\deskpets\\assets\\zhubao\\badminton-run\\qa\\chroma-despill.json",
+  "visualQa": "D:\\deskpets\\assets\\zhubao\\badminton-run\\qa\\final-visual-qa.json",
+  "spriteVersionNumber": 2,
+  "packaged": false
+}

@@ -1,0 +1,5 @@
+{
+  "visual_qa": "pass",
+  "qa_note": "All JSON checks pass, and the normal-size row preserves Zhubao's identity while delivering eight coherent badminton poses with correct shuttle timing, stable registration, and clean artifact-free cells.",
+  "repair_notes": "none"
+}

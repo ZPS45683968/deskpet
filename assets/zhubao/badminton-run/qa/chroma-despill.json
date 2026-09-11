@@ -1,0 +1,26 @@
+{
+  "ok": true,
+  "input": "D:\\deskpets\\assets\\zhubao\\badminton-run\\final\\badminton.png",
+  "output": "D:\\deskpets\\assets\\zhubao\\badminton-run\\final\\badminton.png",
+  "chroma_key": "#00FFFF",
+  "algorithm": "edge-local-chroma-spill-suppression",
+  "strength": 1,
+  "edge_radius": 5,
+  "spill_tolerance": 0.15,
+  "minimum_saturation": 0.1,
+  "changed_pixels": 12439,
+  "decontaminated_pixels": 10563,
+  "spill_suppressed_pixels": 12439,
+  "rejected_pixels": 0,
+  "changed_by_cell": {
+    "r0c2": 1973,
+    "r0c3": 1888,
+    "r0c1": 1659,
+    "r0c4": 1640,
+    "r0c5": 1504,
+    "r0c6": 1315,
+    "r0c0": 1253,
+    "r0c7": 1207
+  },
+  "alpha_preserved": true
+}

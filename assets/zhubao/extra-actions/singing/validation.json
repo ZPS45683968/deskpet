@@ -1,0 +1,100 @@
+{
+  "ok": true,
+  "source": "output/action-sources/sing-strip-v2.png",
+  "frames": [
+    {
+      "frame": 0,
+      "bbox": [
+        28,
+        5,
+        163,
+        203
+      ]
+    },
+    {
+      "frame": 1,
+      "bbox": [
+        29,
+        5,
+        162,
+        203
+      ]
+    },
+    {
+      "frame": 2,
+      "bbox": [
+        29,
+        5,
+        162,
+        203
+      ]
+    },
+    {
+      "frame": 3,
+      "bbox": [
+        29,
+        5,
+        162,
+        203
+      ]
+    },
+    {
+      "frame": 4,
+      "bbox": [
+        30,
+        5,
+        161,
+        203
+      ]
+    },
+    {
+      "frame": 5,
+      "bbox": [
+        29,
+        5,
+        161,
+        203
+      ]
+    },
+    {
+      "frame": 6,
+      "bbox": [
+        29,
+        5,
+        161,
+        203
+      ]
+    },
+    {
+      "frame": 7,
+      "bbox": [
+        29,
+        5,
+        162,
+        203
+      ]
+    }
+  ],
+  "despill": {
+    "algorithm": "edge-local-chroma-spill-suppression",
+    "strength": 1,
+    "edge_radius": 5,
+    "spill_tolerance": 0.15,
+    "minimum_saturation": 0.1,
+    "changed_pixels": 14874,
+    "decontaminated_pixels": 12230,
+    "spill_suppressed_pixels": 14874,
+    "rejected_pixels": 0,
+    "changed_by_cell": {
+      "r0c2": 1882,
+      "r0c1": 1874,
+      "r0c0": 1869,
+      "r0c5": 1867,
+      "r0c3": 1864,
+      "r0c6": 1861,
+      "r0c7": 1832,
+      "r0c4": 1825
+    },
+    "alpha_preserved": true
+  }
+}

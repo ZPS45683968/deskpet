@@ -1,0 +1,100 @@
+{
+  "ok": true,
+  "source": "output/action-sources/coffee-strip.png",
+  "frames": [
+    {
+      "frame": 0,
+      "bbox": [
+        30,
+        9,
+        162,
+        203
+      ]
+    },
+    {
+      "frame": 1,
+      "bbox": [
+        31,
+        9,
+        161,
+        203
+      ]
+    },
+    {
+      "frame": 2,
+      "bbox": [
+        31,
+        9,
+        161,
+        203
+      ]
+    },
+    {
+      "frame": 3,
+      "bbox": [
+        31,
+        9,
+        161,
+        203
+      ]
+    },
+    {
+      "frame": 4,
+      "bbox": [
+        30,
+        5,
+        161,
+        203
+      ]
+    },
+    {
+      "frame": 5,
+      "bbox": [
+        31,
+        9,
+        161,
+        203
+      ]
+    },
+    {
+      "frame": 6,
+      "bbox": [
+        31,
+        9,
+        161,
+        203
+      ]
+    },
+    {
+      "frame": 7,
+      "bbox": [
+        30,
+        9,
+        162,
+        203
+      ]
+    }
+  ],
+  "despill": {
+    "algorithm": "edge-local-chroma-spill-suppression",
+    "strength": 1,
+    "edge_radius": 5,
+    "spill_tolerance": 0.15,
+    "minimum_saturation": 0.1,
+    "changed_pixels": 15487,
+    "decontaminated_pixels": 12190,
+    "spill_suppressed_pixels": 15487,
+    "rejected_pixels": 0,
+    "changed_by_cell": {
+      "r0c0": 1977,
+      "r0c5": 1945,
+      "r0c7": 1941,
+      "r0c1": 1940,
+      "r0c6": 1929,
+      "r0c4": 1925,
+      "r0c2": 1923,
+      "r0c3": 1907
+    },
+    "alpha_preserved": true
+  }
+}

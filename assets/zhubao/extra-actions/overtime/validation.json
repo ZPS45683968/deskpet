@@ -1,0 +1,100 @@
+{
+  "ok": true,
+  "source": "output/action-sources/overtime-strip.png",
+  "frames": [
+    {
+      "frame": 0,
+      "bbox": [
+        11,
+        13,
+        187,
+        196
+      ]
+    },
+    {
+      "frame": 1,
+      "bbox": [
+        9,
+        13,
+        183,
+        196
+      ]
+    },
+    {
+      "frame": 2,
+      "bbox": [
+        9,
+        16,
+        184,
+        196
+      ]
+    },
+    {
+      "frame": 3,
+      "bbox": [
+        9,
+        15,
+        183,
+        196
+      ]
+    },
+    {
+      "frame": 4,
+      "bbox": [
+        9,
+        13,
+        183,
+        196
+      ]
+    },
+    {
+      "frame": 5,
+      "bbox": [
+        9,
+        12,
+        183,
+        196
+      ]
+    },
+    {
+      "frame": 6,
+      "bbox": [
+        9,
+        15,
+        183,
+        196
+      ]
+    },
+    {
+      "frame": 7,
+      "bbox": [
+        8,
+        12,
+        181,
+        196
+      ]
+    }
+  ],
+  "despill": {
+    "algorithm": "edge-local-chroma-spill-suppression",
+    "strength": 1,
+    "edge_radius": 5,
+    "spill_tolerance": 0.15,
+    "minimum_saturation": 0.1,
+    "changed_pixels": 24745,
+    "decontaminated_pixels": 19487,
+    "spill_suppressed_pixels": 24745,
+    "rejected_pixels": 0,
+    "changed_by_cell": {
+      "r0c5": 3235,
+      "r0c0": 3181,
+      "r0c7": 3141,
+      "r0c6": 3122,
+      "r0c1": 3072,
+      "r0c4": 3049,
+      "r0c2": 2981,
+      "r0c3": 2964
+    },
+    "alpha_preserved": true
+  }
+}

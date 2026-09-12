@@ -1,0 +1,40 @@
+const test = require('node:test');
+const assert = require('node:assert/strict');
+const { createDefaultState, performCommand, normalizeState } = require('../src/game-engine');
+const { nextOccurrence } = require('../src/reminders');
+const { GameStore } = require('../src/game-store');
+const at = (day, hour = 9) => new Date(2026, 8, day, hour).getTime();
+test('calendar repeats preserve local time, skip weekends and missed occurrences', () => {
+  const memo = { eventAt: at(11), remindAt: at(11)-300000 };
+  assert.equal(nextOccurrence({ ...memo, repeat: 'daily' }, at(11)).eventAt, at(12));
+  assert.equal(nextOccurrence({ ...memo, repeat: 'weekdays' }, at(11)).eventAt, at(14));
+  assert.equal(nextOccurrence({ ...memo, repeat: 'weekly' }, at(20)).eventAt, at(25));
+  assert.equal(nextOccurrence({ ...memo, repeat: 'daily' }, at(20, 12)).eventAt, at(21));
+});
+test('acknowledging repeats reschedules; stop completes; old saves migrate', () => {
+  let state = createDefaultState(at(10));
+  state = performCommand(state, 'save-memo', { text: '例会', eventAt: at(11), remindAt: at(11)-300000, repeat: 'weekdays' }, at(10)).state;
+  const id = state.memos[0].id;
+  state = performCommand(state, 'complete-memo', { id }, at(11)).state;
+  assert.equal(state.memos[0].eventAt, at(14));
+  assert.equal(state.memos[0].notified, false);
+  assert.equal(performCommand(state, 'stop-memo', { id }, at(11)).state.memos[0].completed, true);
+  assert.equal(normalizeState({ memos: [{ id: 'a', text: 'old', eventAt: 1000, remindAt: 500 }] }).memos[0].repeat, 'none');
+  const weekend = performCommand(createDefaultState(at(11)), 'save-memo', { text: '工作日计划', eventAt: at(12), remindAt: at(12)-300000, repeat: 'weekdays' }, at(11));
+  assert.equal(weekend.state.memos[0].eventAt, at(14));
+  assert.equal(weekend.state.memos[0].remindAt, at(14)-300000);
+});
+test('water default, configuration, deferred priority, and one reminder after absence', () => {
+  const store = Object.create(GameStore.prototype);
+  store.state = createDefaultState(1000); store.save = () => {};
+  assert.equal(store.state.hydration.minutes, 60);
+  assert.equal(store.takeWaterReminder(3600999), null);
+  store.state.memos.push({ awaitingAck: true });
+  assert.equal(store.takeWaterReminder(3601000), null);
+  store.state.memos = [];
+  assert.equal(store.takeWaterReminder(7201000).water, true);
+  assert.equal(store.takeWaterReminder(7201001), null);
+  store.state = performCommand(store.state, 'set-hydration', { enabled: false, minutes: 30 }, 7201000).state;
+  assert.equal(store.takeWaterReminder(99999999), null);
+  assert.equal(performCommand(store.state, 'set-hydration', { enabled: true, minutes: -1 }).reaction.ok, false);
+});

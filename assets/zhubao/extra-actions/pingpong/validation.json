@@ -1,0 +1,100 @@
+{
+  "ok": true,
+  "source": "output/action-sources/pingpong-strip-v2.png",
+  "frames": [
+    {
+      "frame": 0,
+      "bbox": [
+        13,
+        12,
+        178,
+        194
+      ]
+    },
+    {
+      "frame": 1,
+      "bbox": [
+        12,
+        12,
+        180,
+        194
+      ]
+    },
+    {
+      "frame": 2,
+      "bbox": [
+        8,
+        12,
+        184,
+        195
+      ]
+    },
+    {
+      "frame": 3,
+      "bbox": [
+        18,
+        12,
+        174,
+        194
+      ]
+    },
+    {
+      "frame": 4,
+      "bbox": [
+        6,
+        12,
+        186,
+        194
+      ]
+    },
+    {
+      "frame": 5,
+      "bbox": [
+        14,
+        13,
+        178,
+        195
+      ]
+    },
+    {
+      "frame": 6,
+      "bbox": [
+        14,
+        13,
+        178,
+        195
+      ]
+    },
+    {
+      "frame": 7,
+      "bbox": [
+        14,
+        12,
+        178,
+        194
+      ]
+    }
+  ],
+  "despill": {
+    "algorithm": "edge-local-chroma-spill-suppression",
+    "strength": 1,
+    "edge_radius": 5,
+    "spill_tolerance": 0.15,
+    "minimum_saturation": 0.1,
+    "changed_pixels": 17792,
+    "decontaminated_pixels": 13715,
+    "spill_suppressed_pixels": 17792,
+    "rejected_pixels": 0,
+    "changed_by_cell": {
+      "r0c2": 2354,
+      "r0c4": 2335,
+      "r0c1": 2277,
+      "r0c3": 2254,
+      "r0c5": 2212,
+      "r0c0": 2162,
+      "r0c7": 2106,
+      "r0c6": 2092
+    },
+    "alpha_preserved": true
+  }
+}

@@ -11,6 +11,7 @@ let activeTab = 'home';
 let toastTimer;
 let memoDraft = { id: '', text: '', eventAt: '', remindAt: '' };
 let reminderTimeManual = false;
+const repeatLabels = { none: '不重复', daily: '每天', weekdays: '工作日', weekly: '每周' };
 const localInput = value => { const d = new Date(value); return new Date(value - d.getTimezoneOffset() * 60000).toISOString().slice(0, 16); };
 
 const escapeHtml = (value) => String(value)
@@ -63,7 +64,7 @@ function renderHome() {
       <button class="action-button" data-command="interact" data-type="walk"><span>🚶</span>散步</button>
       <button class="action-button" data-command="interact" data-type="play"><span>🎐</span>玩耍</button>
       <button class="action-button" data-command="interact" data-type="badminton"><span>🏸</span>羽毛球</button>
-      ${[['soccer', '⚽', '足球'], ['basketball', '🏀', '篮球'], ['weights', '🏋', '举哑铃'], ['singing', '🎤', '唱歌'], ['pingpong', '🏓', '乒乓球'], ['overtime', '💻', '加班']].map(([type, icon, label]) => `<button class="action-button" data-command="interact" data-type="${type}"><span>${icon}</span>${label}</button>`).join('')}
+      ${[['soccer', '⚽', '足球'], ['basketball', '🏀', '篮球'], ['weights', '🏋', '举哑铃'], ['singing', '🎤', '唱歌'], ['pingpong', '🏓', '乒乓球'], ['overtime', '💻', '加班'], ['coffee', '☕', '喝咖啡']].map(([type, icon, label]) => `<button class="action-button" data-command="interact" data-type="${type}"><span>${icon}</span>${label}</button>`).join('')}
       <button class="action-button" data-command="interact" data-type="rest"><span>😴</span>休息</button>
     </div>
     <div class="tip"><div class="tip-icon">🌿</div><div>${tip}</div></div>`;
@@ -109,16 +110,18 @@ function renderDiary() {
 function renderMemos() {
   const rows = [...state.memos].sort((a, b) => a.completed - b.completed || a.remindAt - b.remindAt);
   const ended = m => m.completed || (m.notified && !m.awaitingAck);
-  const section = (title, items, finished = false) => `<section class="memo-group ${finished ? 'memo-ended' : 'memo-pending'}"><div class="section-title"><h2>${title}</h2><p>${items.length} 条</p></div>${items.map(m => `<article class="card card-pad memo-entry"><p>${escapeHtml(m.text)}</p><time>事项：${new Date(m.eventAt).toLocaleString('zh-CN')}<br>提醒：${new Date(m.remindAt).toLocaleString('zh-CN')}</time><div class="button-row"><strong class="memo-status">${finished ? '✓ 已结束' : m.awaitingAck ? '🔔 提醒中 · 等待确认' : '◷ 待提醒'}</strong><button class="secondary" data-edit-memo="${escapeHtml(m.id)}">${finished ? '重新安排' : '编辑'}</button>${finished ? '' : `<button class="small-button" data-command="complete-memo" data-id="${escapeHtml(m.id)}">${m.awaitingAck ? '结束提醒' : '完成'}</button>`}<button class="secondary" data-command="delete-memo" data-id="${escapeHtml(m.id)}">删除</button></div></article>`).join('') || '<div class="empty">暂无备忘</div>'}</section>`;
-  return `<div class="section-title"><h2>备忘录</h2><p>按本机时间提醒</p></div>
-    <form id="memo-form" class="card card-pad memo-form">
-      <label>备忘内容<textarea name="text" required maxlength="300" placeholder="让竹宝帮你记住…">${escapeHtml(memoDraft.text)}</textarea></label>
+  const section = (title, items, finished = false) => `<section class="memo-group ${finished ? 'memo-ended' : 'memo-pending'}"><div class="section-title"><h2>${title}</h2><p>${items.length} 条</p></div>${items.map(m => `<article class="card card-pad memo-entry"><p>${escapeHtml(m.text)}</p><div class="memo-repeat">${repeatLabels[m.repeat] || '不重复'}</div><time>事项：${new Date(m.eventAt).toLocaleString('zh-CN')}<br>提醒：${new Date(m.remindAt).toLocaleString('zh-CN')}</time><div class="button-row"><strong class="memo-status">${finished ? '✓ 已结束' : m.awaitingAck ? '🔔 提醒中 · 等待确认' : '◷ 待提醒'}</strong><button class="secondary" data-edit-memo="${escapeHtml(m.id)}">${finished ? '重新安排' : '编辑'}</button>${finished ? '' : `<button class="small-button" data-command="complete-memo" data-id="${escapeHtml(m.id)}">${m.awaitingAck ? '结束提醒' : '完成'}</button>`}${!finished && m.repeat !== 'none' ? `<button class="secondary" data-command="stop-memo" data-id="${escapeHtml(m.id)}">停止重复</button>` : ''}<button class="secondary" data-command="delete-memo" data-id="${escapeHtml(m.id)}">删除</button></div></article>`).join('') || '<div class="empty">暂无备忘</div>'}</section>`;
+  return `<div class="memo-hero"><span>YOUR LITTLE ASSISTANT</span><h2>把小事交给竹宝</h2><p>记下计划，留心每一个重要时刻。</p></div>
+    <details class="memo-composer" ${!rows.length || memoDraft.id || memoDraft.text ? 'open' : ''}><summary>＋ ${memoDraft.id ? '编辑备忘' : '新增备忘'}</summary><form id="memo-form" class="card card-pad memo-form">
+      <div class="section-title"><h2>${memoDraft.id ? '编辑计划' : '新建计划'}</h2><p>提前 5 分钟提醒</p></div>
+      <label>备忘内容<textarea name="text" required maxlength="300" placeholder="例如：提交周报、参加例会…">${escapeHtml(memoDraft.text)}</textarea></label>
       <label>事项时间<input name="eventAt" type="datetime-local" required value="${escapeHtml(memoDraft.eventAt)}"></label>
       <label>提醒时间（默认提前 5 分钟，可修改）<input name="remindAt" type="datetime-local" required value="${escapeHtml(memoDraft.remindAt)}"></label>
+      <label>重复<select name="repeat">${Object.entries(repeatLabels).map(([value, label]) => `<option value="${value}" ${(memoDraft.repeat || 'none') === value ? 'selected' : ''}>${label}</option>`).join('')}</select></label>
       <div class="button-row"><button class="small-button" type="submit">${memoDraft.id ? '保存修改' : '添加备忘'}</button>${memoDraft.id ? '<button class="secondary" type="button" id="cancel-memo">取消修改</button>' : ''}</div>
-      <p class="memo-help">请保持桌宠运行；退出期间错过的提醒会在下次启动时补上。提醒会持续播放，点击桌宠或气泡中的“结束提醒”后结束；长内容可滚动查看。</p>
-    </form>
-    ${section('正在提醒', rows.filter(m => !ended(m) && m.awaitingAck))}
+      <details class="memo-help"><summary>提醒与重复规则</summary>请保持桌宠运行，错过的提醒下次启动补上。点击结束后，重复计划自动安排下一次；工作日指周一至周五，每周按所选事项的星期重复。</details>
+    </form></details>
+    ${rows.some(m => !ended(m) && m.awaitingAck) ? section('正在提醒', rows.filter(m => !ended(m) && m.awaitingAck)) : ''}
     ${section('待提醒', rows.filter(m => !ended(m) && !m.awaitingAck))}
     ${section('已结束', rows.filter(ended).reverse(), true)}`;
 }
@@ -135,6 +138,8 @@ function renderSettings() {
       ${setting('autoFeed', '自动投喂', '饱食过低时自动吃背包中的竹叶')}
       ${setting('bubbles', '对话气泡', '在桌面上显示竹宝的反应')}
     </div>
+    <div class="section-title"><h2>💧 喝水提醒</h2><p>默认每小时一次</p></div>
+    <form id="water-form" class="card card-pad memo-form"><label class="water-toggle"><input name="enabled" type="checkbox" ${state.hydration.enabled ? 'checked' : ''}>开启喝水提醒</label><label>间隔（分钟）<input name="minutes" type="number" min="1" max="480" required value="${state.hydration.minutes}"></label><button class="small-button" type="submit">保存提醒设置</button><p class="memo-help">运行期间按间隔提醒，备忘录提醒结束后再提示喝水。</p></form>
     <div class="section-title"><h2>名字</h2></div>
     <div class="card"><div class="name-form"><input id="name-input" maxlength="12" value="${escapeHtml(state.profile.name)}" aria-label="宠物名字"><button class="small-button" id="save-name">保存</button></div></div>
     <div class="section-title"><h2>存档</h2><p>可跨版本保留</p></div>
@@ -168,7 +173,7 @@ content.addEventListener('click', async (event) => {
   const editMemo = event.target.closest('[data-edit-memo]');
   if (editMemo) {
     const memo = state.memos.find(m => m.id === editMemo.dataset.editMemo);
-    memoDraft = { id: memo.id, text: memo.text, eventAt: localInput(memo.eventAt), remindAt: localInput(memo.remindAt) };
+    memoDraft = { id: memo.id, text: memo.text, eventAt: localInput(memo.eventAt), remindAt: localInput(memo.remindAt), repeat: memo.repeat };
     reminderTimeManual = memo.eventAt - memo.remindAt !== 5 * 60000;
     render(); return;
   }
@@ -211,15 +216,20 @@ content.addEventListener('input', event => {
   }
 });
 content.addEventListener('submit', async event => {
+  if (event.target.id === 'water-form') {
+    event.preventDefault();
+    await command('set-hydration', { enabled: event.target.elements.enabled.checked, minutes: Number(event.target.elements.minutes.value) });
+    return;
+  }
   if (event.target.id !== 'memo-form') return;
   event.preventDefault();
-  const outcome = await window.zhubaoDesktop.command('save-memo', { id: memoDraft.id || undefined, text: memoDraft.text, eventAt: new Date(memoDraft.eventAt).getTime(), remindAt: new Date(memoDraft.remindAt).getTime() });
+  const outcome = await window.zhubaoDesktop.command('save-memo', { id: memoDraft.id || undefined, text: memoDraft.text, eventAt: new Date(memoDraft.eventAt).getTime(), remindAt: new Date(memoDraft.remindAt).getTime(), repeat: memoDraft.repeat || 'none' });
   if (outcome.reaction.ok) { memoDraft = { id: '', text: '', eventAt: '', remindAt: '' }; reminderTimeManual = false; }
   state = outcome.state; render(); showToast(outcome.reaction.message);
 });
 window.zhubaoDesktop.onState((nextState) => {
   state = nextState;
-  if (activeTab === 'memos' && document.activeElement?.closest('#memo-form')) { header(); return; }
+  if (document.activeElement?.closest('#memo-form, #water-form')) { header(); return; }
   render();
 });
 window.zhubaoDesktop.onReaction((reaction) => showToast(reaction.message));
@@ -231,4 +241,7 @@ window.zhubaoDesktop.onPanelTab((tab) => {
 });
 
 window.zhubaoDesktop.getState().then((initialState) => { state = initialState; render(); });
+
+
+
 

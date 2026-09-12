@@ -12,13 +12,50 @@ parser.add_argument('--source', required=True)
 args = parser.parse_args()
 sys.path.insert(0, str(Path(args.skill_dir) / 'scripts'))
 from extract_strip_frames import remove_chroma_background, extract_stable_slot_frames
+import extract_strip_frames as extractor
 from despill_chroma_edges import decontaminate_image
 
 root = Path(__file__).resolve().parents[1]
 out = root / 'assets' / 'zhubao' / 'extra-actions' / args.action
 out.mkdir(parents=True, exist_ok=True)
 strip = remove_chroma_background(Image.open(args.source), (255, 0, 255), 96)
+if args.action == 'pingpong':
+    # These generated strips place props near slot edges. Nearest-body grouping
+    # assigns a ball/lamp fragment to the next pose; preserve its source slot.
+    original_groups = extractor.component_frame_groups
+    def slot_prop_groups(image, count):
+        groups = original_groups(image, count)
+        if groups is None:
+            return None
+        corrected = [[group[0]] for group in groups]
+        for group in groups:
+            for component in group[1:]:
+                index = min(count - 1, int(component['center_x'] / (image.width / count)))
+                corrected[index].append(component)
+        return corrected
+    extractor.component_frame_groups = slot_prop_groups
 frames = extract_stable_slot_frames(strip, 8)
+if args.action == 'overtime':
+    # The source's table edges cross equal-width slots. Locate the narrow
+    # background gaps between whole poses instead of splitting at slot lines.
+    alpha = strip.getchannel('A')
+    width, height = strip.size
+    cuts = [0]
+    for index in range(1, 8):
+        center = round(index * width / 8)
+        candidates = range(center - 25, center + 26)
+        cut = min(candidates, key=lambda x: (sum(v > 16 for v in alpha.crop((x, 0, x + 1, height)).getdata()), abs(x-center)))
+        cuts.append(cut)
+    cuts.append(width)
+    bbox = alpha.getbbox()
+    top, bottom = max(0, bbox[1]-4), min(height, bbox[3]+4)
+    shared_width = max(b-a for a, b in zip(cuts, cuts[1:])) + 8
+    frames = []
+    for left, right in zip(cuts, cuts[1:]):
+        crop = strip.crop((left, top, right, bottom))
+        viewport = Image.new('RGBA', (shared_width, bottom-top))
+        viewport.alpha_composite(crop, ((shared_width-crop.width)//2, 0))
+        frames.append(extractor.fit_viewport_to_cell(viewport))
 atlas = Image.new('RGBA', (1536, 208))
 for i, frame in enumerate(frames):
     atlas.alpha_composite(frame, (i * 192, 0))

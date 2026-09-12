@@ -6,19 +6,24 @@
 * { box-sizing: border-box; user-select: none; }
 html, body { width: 100%; height: 100%; margin: 0; overflow: hidden; background: transparent; }
 
+/* The window is taller than the pet: the pet sits at the bottom and the space above
+   its head (120px, see WINDOW_SIZE in main.js) hosts the speech bubble. */
 #pet-stage {
   position: relative;
-  width: var(--cell-width);
-  height: var(--cell-height);
+  width: 100%;
+  height: 100%;
   -webkit-app-region: no-drag;
-  cursor: grab;
 }
 
-#pet-stage.dragging { cursor: grabbing; }
+#pet-stage.dragging, #pet-stage.dragging #sprite { cursor: grabbing; }
 
 #sprite {
+  position: absolute;
+  bottom: 0;
+  left: 0;
   width: var(--cell-width);
   height: var(--cell-height);
+  cursor: grab;
   background-image: url('../app-assets/spritesheet.webp');
   background-repeat: no-repeat;
   image-rendering: auto;
@@ -28,7 +33,7 @@ html, body { width: 100%; height: 100%; margin: 0; overflow: hidden; background:
 .speech {
   position: absolute;
   z-index: 4;
-  top: 3px;
+  bottom: calc(var(--cell-height) + 10px);
   left: 50%;
   max-width: 178px;
   padding: 7px 10px;
@@ -45,14 +50,14 @@ html, body { width: 100%; height: 100%; margin: 0; overflow: hidden; background:
   pointer-events: none;
 }
 
-.speech.visible { opacity: 1; transform: translate(-50%, 0) scale(1); }
-.speech.memo-speech { width: 178px; max-height: 94px; overflow-y: auto; white-space: pre-wrap; overflow-wrap: anywhere; pointer-events: auto; text-align: left; user-select: text; }
+.speech.visible { opacity: 1; transform: translate(-50%, 0) scale(1); pointer-events: auto; }
+.speech.memo-speech { width: 178px; max-height: 94px; overflow-y: auto; white-space: pre-wrap; overflow-wrap: anywhere; text-align: left; user-select: text; }
 .dismiss-memo { display: block; position: sticky; bottom: 0; width: 100%; margin-top: 6px; padding: 5px; border: 0; border-radius: 6px; background: #38634c; color: white; font: inherit; cursor: pointer; }
 
 #menu-button {
   position: absolute;
   z-index: 5;
-  top: 5px;
+  top: calc(100% - var(--cell-height) + 5px);
   right: 5px;
   width: 28px;
   height: 28px;

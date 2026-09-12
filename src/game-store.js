@@ -64,6 +64,14 @@ class GameStore {
     }
     return { ok: true, animation: 'reminder', reminder: true, memoId: memo.id, message: memo.text };
   }
+
+  takeWaterReminder(now = Date.now()) {
+    const water = this.state.hydration;
+    if (!water.enabled || now < water.nextAt || this.state.memos.some(m => m.awaitingAck && !m.completed)) return null;
+    water.nextAt = now + water.minutes * 60000;
+    this.save();
+    return { ok: true, animation: 'wave', water: true, message: '喝口水，休息一下吧 💧' };
+  }
 }
 
 module.exports = { GameStore };

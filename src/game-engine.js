@@ -1,4 +1,5 @@
 const DAY_MS = 24 * 60 * 60 * 1000;
+const { REPEATS, nextOccurrence } = require('./reminders');
 
 const CATALOG = Object.freeze({
   bamboo: {
@@ -61,6 +62,7 @@ function createDefaultState(now = Date.now()) {
     settings: { alwaysOnTop: true, autoRoam: true, autoFeed: false, bubbles: true },
     diary: [{ at: now, type: 'hello', text: '竹宝来到了你的桌面，并带来了一筐子好心情。' }],
     memos: [],
+    hydration: { enabled: true, minutes: 60, nextAt: now + 3600000 },
     lastUpdated: now
   };
 }
@@ -83,8 +85,10 @@ function normalizeState(input, now = Date.now()) {
     totals: { ...base.totals, ...(input.totals || {}) },
     settings: { ...base.settings, ...(input.settings || {}) },
     diary: Array.isArray(input.diary) ? input.diary.slice(0, 80) : base.diary,
-    memos: Array.isArray(input.memos) ? input.memos.filter(m => m && typeof m.id === 'string' && typeof m.text === 'string' && m.text.trim() && Number.isFinite(m.eventAt) && Number.isFinite(m.remindAt) && m.remindAt <= m.eventAt).slice(0, 200).map(m => ({ id: m.id, text: m.text.slice(0, 300), eventAt: m.eventAt, remindAt: m.remindAt, notified: m.notified === true, awaitingAck: m.awaitingAck === true && m.completed !== true, completed: m.completed === true })) : []
+    memos: Array.isArray(input.memos) ? input.memos.filter(m => m && typeof m.id === 'string' && typeof m.text === 'string' && m.text.trim() && Number.isFinite(m.eventAt) && Number.isFinite(m.remindAt) && m.remindAt <= m.eventAt).slice(0, 200).map(m => ({ id: m.id, text: m.text.slice(0, 300), eventAt: m.eventAt, remindAt: m.remindAt, repeat: REPEATS.includes(m.repeat) ? m.repeat : 'none', notified: m.notified === true, awaitingAck: m.awaitingAck === true && m.completed !== true, completed: m.completed === true })) : []
   };
+  const minutes = Math.max(1, Math.min(480, Math.floor(Number(input.hydration?.minutes) || 60)));
+  state.hydration = { enabled: input.hydration?.enabled !== false, minutes, nextAt: Number.isFinite(input.hydration?.nextAt) ? input.hydration.nextAt : now + minutes * 60000 };
   for (const key of Object.keys(state.needs)) state.needs[key] = clamp(Number(state.needs[key]) || 0);
   for (const id of Object.keys(CATALOG)) state.inventory[id] = Math.max(0, Math.floor(Number(state.inventory[id]) || 0));
   state.profile.level = Math.max(1, Math.floor(Number(state.profile.level) || 1));
@@ -158,6 +162,12 @@ function result(state, reaction, changed = true) {
 function performCommand(current, command, payload = {}, now = Date.now()) {
   const state = applyElapsed(normalizeState(current, now), now);
   const name = state.profile.name;
+  if (command === 'set-hydration') {
+    const minutes = Number(payload.minutes);
+    if (!Number.isInteger(minutes) || minutes < 1 || minutes > 480) return result(state, { ok: false, message: '提醒间隔请填写 1–480 分钟。' }, false);
+    state.hydration = { enabled: Boolean(payload.enabled), minutes, nextAt: now + minutes * 60000 };
+    return result(state, { ok: true, silent: true, message: '喝水提醒已保存。' });
+  }
 
   if (command === 'save-memo') {
     const text = String(payload.text || '').trim();
@@ -169,16 +179,19 @@ function performCommand(current, command, payload = {}, now = Date.now()) {
       return result(state, { ok: false, message: '请填写 1–300 字内容，提醒时间须晚于现在且不晚于事项时间。' }, false);
     }
     if (!existing && state.memos.length >= 200) return result(state, { ok: false, message: '最多保存 200 条，请先删除旧备忘录。' }, false);
-    const memo = { id: existing?.id || require('crypto').randomUUID(), text, eventAt, remindAt, notified: false, completed: false };
+    const memo = { id: existing?.id || require('crypto').randomUUID(), text, eventAt, remindAt, repeat: REPEATS.includes(payload.repeat) ? payload.repeat : 'none', notified: false, completed: false };
+    if (memo.repeat === 'weekdays' && [0, 6].includes(new Date(memo.eventAt).getDay())) Object.assign(memo, nextOccurrence(memo, now));
     if (existing) state.memos[state.memos.indexOf(existing)] = memo;
     else state.memos.push(memo);
     return result(state, { ok: true, silent: true, message: '备忘录已保存。' });
   }
-  if (command === 'delete-memo' || command === 'complete-memo') {
+  if (command === 'delete-memo' || command === 'complete-memo' || command === 'stop-memo') {
     const memo = state.memos.find(m => m.id === payload.id);
     if (!memo) return result(state, { ok: false, message: '备忘录不存在。' }, false);
     if (command === 'delete-memo') state.memos = state.memos.filter(m => m !== memo);
-    else { memo.completed = true; memo.awaitingAck = false; }
+    else if (command === 'complete-memo' && memo.repeat !== 'none') {
+      Object.assign(memo, nextOccurrence(memo, now), { awaitingAck: false, notified: false, completed: false });
+    } else { memo.completed = true; memo.awaitingAck = false; }
     return result(state, { ok: true, silent: true, message: command === 'delete-memo' ? '已删除。' : '已完成。' });
   }
 
@@ -195,6 +208,7 @@ function performCommand(current, command, payload = {}, now = Date.now()) {
       singing: { effects: { mood: 18, energy: -12, satiety: -3, affection: 3, xp: 10 }, animation: 'singing', message: `${name}为你唱了一首歌 ♪` },
       pingpong: { effects: { mood: 18, energy: -12, satiety: -3, affection: 3, xp: 10 }, animation: 'pingpong', message: `${name}挥动球拍，接住了乒乓球！` },
       overtime: { effects: { energy: -6, satiety: -2, affection: 2, xp: 8 }, animation: 'overtime', message: `${name}陪你加班，也别忘了休息呀。` },
+      coffee: { effects: { mood: 8, energy: 10, affection: 1, xp: 4 }, animation: 'coffee', message: `${name}捧起咖啡喝了一口，满足地笑了 ☕` },
       rest: { effects: { energy: 24, mood: 3, xp: 3 }, animation: 'sit', message: `${name}坐下来打个小盹。` },
       inspect: { effects: { mood: 4, xp: 4 }, animation: 'inspect', message: `${name}正在认真观察新叶子。` }
     };
@@ -296,4 +310,5 @@ module.exports = {
   publicSnapshot,
   xpNeeded
 };
+
 

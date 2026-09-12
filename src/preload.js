@@ -10,6 +10,7 @@ contextBridge.exposeInMainWorld('zhubaoDesktop', {
   getWindowBounds: () => ipcRenderer.invoke('get-window-bounds'),
   getWorkArea: () => ipcRenderer.invoke('get-work-area'),
   moveWindow: (position) => ipcRenderer.send('move-window', position),
+  setMousePassthrough: (ignore) => ipcRenderer.send('set-mouse-passthrough', ignore),
   showMenu: () => ipcRenderer.send('show-pet-menu'),
   openPanel: (tab = 'home') => ipcRenderer.send('open-panel', tab),
   getState: () => ipcRenderer.invoke('get-game-state'),

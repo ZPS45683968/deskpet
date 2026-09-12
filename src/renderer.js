@@ -18,7 +18,7 @@ const ANIMATIONS = {
   inspect: { row: 8, frames: 6, fps: 3.3, loop: false },
   badminton: { row: 0, frames: 8, fps: 4.2, loop: false, sheet: 'badminton' }
 };
-for (const name of ['soccer', 'basketball', 'weights', 'singing', 'pingpong', 'overtime', 'reminder']) {
+for (const name of ['soccer', 'basketball', 'weights', 'singing', 'pingpong', 'overtime', 'coffee', 'reminder']) {
   ANIMATIONS[name] = { row: 0, frames: 8, fps: 4.2, loop: false, sheet: name };
 }
 
@@ -31,8 +31,18 @@ let randomTimer;
 let blinkTimer;
 let bubbleTimer;
 let dragState;
+let mousePassthrough = false;
 let settings = { autoRoam: true, bubbles: true };
 let activeMemoId = null;
+let satiety = 100;
+let lastHungerAt = 0;
+function checkHunger() {
+  if (satiety >= 30) { lastHungerAt = 0; return; }
+  if (activeMemoId || speech.classList.contains('visible') || Date.now() - lastHungerAt < 60000) return;
+  lastHungerAt = Date.now();
+  showSpeech('要饿坏了，要饿坏了', false, true);
+}
+setInterval(checkHunger, 1000);
 
 function clearReminder() {
   activeMemoId = null;
@@ -100,8 +110,8 @@ function scheduleBlink() {
   }, 5500 + Math.random() * 6500);
 }
 
-function showSpeech(message, reminder = false) {
-  if ((!settings.bubbles && !reminder) || !message) return;
+function showSpeech(message, reminder = false, force = false) {
+  if ((!settings.bubbles && !reminder && !force) || !message) return;
   clearTimeout(bubbleTimer);
   speech.textContent = message;
   if (reminder) {
@@ -217,6 +227,20 @@ stage.addEventListener('contextmenu', (event) => {
   event.preventDefault();
   window.zhubaoDesktop.showMenu();
 });
+
+function setMousePassthrough(ignore) {
+  if (mousePassthrough === ignore) return;
+  mousePassthrough = ignore;
+  window.zhubaoDesktop.setMousePassthrough(ignore);
+}
+
+// The window keeps headroom above the pet for speech bubbles, so clicks over that
+// empty area should fall through to the desktop behind it.
+document.addEventListener('mousemove', (event) => {
+  const interactive = Boolean(dragState)
+    || (event.target instanceof Element && Boolean(event.target.closest('#sprite, #menu-button, .speech.visible')));
+  setMousePassthrough(!interactive);
+});
 menuButton.addEventListener('pointerdown', (event) => event.stopPropagation());
 menuButton.addEventListener('click', () => window.zhubaoDesktop.openPanel('home'));
 
@@ -224,22 +248,25 @@ window.zhubaoDesktop.onReaction((reaction) => {
   if (reaction.reminder) activeMemoId = reaction.memoId;
   else if (activeMemoId) return;
   if (reaction.animation) perform(reaction.animation);
-  showSpeech(reaction.message, reaction.reminder);
+  showSpeech(reaction.message, reaction.reminder, reaction.water);
 });
 
 window.zhubaoDesktop.onState((state) => {
   settings = state.settings;
+  satiety = state.needs.satiety;
   if (activeMemoId && !state.memos.some(m => m.id === activeMemoId && m.awaitingAck && !m.completed)) clearReminder();
-  needIndicator.className = state.needs.satiety < 22 ? 'hungry' : state.needs.energy < 20 ? 'tired' : '';
-  needIndicator.textContent = state.needs.satiety < 22 ? '🎋' : state.needs.energy < 20 ? 'Zz' : '';
+  needIndicator.className = satiety < 30 ? 'hungry' : state.needs.energy < 20 ? 'tired' : '';
+  needIndicator.textContent = satiety < 30 ? '🎋' : state.needs.energy < 20 ? 'Zz' : '';
   if (settings.autoRoam) scheduleRandomBehavior();
   else clearTimeout(randomTimer);
 });
 
 window.zhubaoDesktop.getState().then((state) => {
   settings = state.settings;
-  if (state.needs.satiety < 22) showSpeech('肚子有一点点空……');
+  satiety = state.needs.satiety;
+  checkHunger();
   scheduleRandomBehavior();
 });
 
 play('idle');
+

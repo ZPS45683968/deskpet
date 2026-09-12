@@ -12,7 +12,8 @@ let memoTimer;
 let activeMemoId = null;
 let quitting = false;
 
-const WINDOW_SIZE = { width: 192, height: 208 };
+// Pet cell (192x208) plus 120px of headroom above the pet for speech bubbles (see .speech in styles.css).
+const WINDOW_SIZE = { width: 192, height: 328 };
 const SMOKE_TEST = process.argv.includes('--smoke-test');
 
 function configurePortableStorage() {
@@ -163,7 +164,7 @@ function rebuildTrayMenu(snapshot = gameStore?.snapshot()) {
     { label: '🚶 散步', click: () => runGameCommand('interact', { type: 'walk' }) },
     { label: '🎐 玩耍', click: () => runGameCommand('interact', { type: 'play' }) },
     { label: '🏸 打羽毛球', click: () => runGameCommand('interact', { type: 'badminton' }) },
-    ...[['soccer', '⚽ 踢足球'], ['basketball', '🏀 打篮球'], ['weights', '🏋 举哑铃'], ['singing', '🎤 唱歌'], ['pingpong', '🏓 打乒乓球'], ['overtime', '💻 加班']].map(([type, label]) => ({ label, click: () => runGameCommand('interact', { type }) })),
+    ...[['soccer', '⚽ 踢足球'], ['basketball', '🏀 打篮球'], ['weights', '🏋 举哑铃'], ['singing', '🎤 唱歌'], ['pingpong', '🏓 打乒乓球'], ['overtime', '💻 加班'], ['coffee', '☕ 喝咖啡']].map(([type, label]) => ({ label, click: () => runGameCommand('interact', { type }) })),
     { label: '😴 休息', click: () => runGameCommand('interact', { type: 'rest' }) },
     { type: 'separator' },
     { label: '🎒 背包与商店', click: () => showPanel('bag') },
@@ -202,6 +203,9 @@ function registerIpc() {
     const nextX = Math.max(area.x, Math.min(Math.round(x), area.x + area.width - WINDOW_SIZE.width));
     const nextY = Math.max(area.y, Math.min(Math.round(y), area.y + area.height - WINDOW_SIZE.height));
     petWindow.setPosition(nextX, nextY, false);
+  });
+  ipcMain.on('set-mouse-passthrough', (_event, ignore) => {
+    if (petWindow && !petWindow.isDestroyed()) petWindow.setIgnoreMouseEvents(ignore, { forward: true });
   });
   ipcMain.on('show-pet-menu', () => tray?.popUpContextMenu());
   ipcMain.on('open-panel', (_event, tab) => showPanel(tab));
@@ -254,12 +258,12 @@ app.whenReady().then(async () => {
     await petWindow.webContents.executeJavaScript("window.zhubaoDesktop.command('interact', { type: 'badminton' })");
     await new Promise((resolve) => setTimeout(resolve, 850));
     const badmintonCapture = await petWindow.webContents.capturePage();
-    for (const type of ['soccer', 'basketball', 'weights', 'singing', 'pingpong', 'overtime']) {
+    for (const type of ['soccer', 'basketball', 'weights', 'singing', 'pingpong', 'overtime', 'coffee']) {
       await petWindow.webContents.executeJavaScript(`window.zhubaoDesktop.command('interact', { type: '${type}' })`);
       await new Promise(resolve => setTimeout(resolve, 100));
       const loaded = await petWindow.webContents.executeJavaScript(`new Promise(resolve => { const image = new Image(); image.onload = () => resolve(image.naturalWidth === 1536 && image.naturalHeight === 208 && document.querySelector('#sprite').style.backgroundImage.includes('${type}.webp')); image.onerror = () => resolve(false); image.src = '../app-assets/${type}.webp'; })`);
       if (!loaded) throw new Error(`Action failed: ${type}`);
-      if (['pingpong', 'overtime'].includes(type)) {
+      if (['pingpong', 'overtime', 'coffee'].includes(type)) {
         petWindow.showInactive();
         await new Promise(resolve => setTimeout(resolve, 250));
         fs.writeFileSync(path.join(app.getPath('temp'), `zhubao-${type}-smoke.png`), (await petWindow.webContents.capturePage()).toPNG());
@@ -308,6 +312,20 @@ app.whenReady().then(async () => {
     if (!dismissed) throw new Error('Reminder did not stop on click');
     const grouped = await panelWindow.webContents.executeJavaScript("document.querySelector('.memo-ended .memo-entry')?.textContent.includes('喝水 <提醒> & 休息') && !document.querySelector('.memo-pending .memo-entry')");
     if (!grouped) throw new Error('Completed memo was not moved to ended section');
+    const future = Date.now() + 86400000;
+    runGameCommand('save-memo', { text: '整理工作日报', eventAt: future, remindAt: future-300000, repeat: 'weekdays' });
+    await new Promise(resolve => setTimeout(resolve, 150));
+    fs.writeFileSync(path.join(app.getPath('temp'), 'zhubao-memos-redesign.png'), (await panelWindow.webContents.capturePage()).toPNG());
+    safeSend(panelWindow, 'panel-tab', 'settings');
+    await new Promise(resolve => setTimeout(resolve, 100));
+    await panelWindow.webContents.executeJavaScript(`(() => { const form = document.querySelector('#water-form'); form.elements.minutes.value = '30'; form.requestSubmit(); })()`);
+    await new Promise(resolve => setTimeout(resolve, 100));
+    if (gameStore.state.hydration.minutes !== 30) throw new Error('Water configuration failed');
+    sendReaction(gameStore.takeWaterReminder(Date.now() + 1800001));
+    await new Promise(resolve => setTimeout(resolve, 100));
+    if (!await petWindow.webContents.executeJavaScript("document.querySelector('#speech').textContent.includes('喝口水')")) throw new Error('Water bubble failed');
+    await petWindow.webContents.executeJavaScript("speech.classList.remove('visible'); satiety = 29; lastHungerAt = 0; checkHunger()");
+    if (!await petWindow.webContents.executeJavaScript("document.querySelector('#speech').textContent === '要饿坏了，要饿坏了'")) throw new Error('Hunger bubble failed');
     const checkedTabs = await panelWindow.webContents.executeJavaScript(`
       [...document.querySelectorAll('[data-tab]')].map((button) => {
         button.click();
@@ -329,7 +347,12 @@ app.whenReady().then(async () => {
   createTray();
   memoTimer = setInterval(() => {
     const reaction = gameStore.takeDueMemo();
-    if (!reaction) { activeMemoId = null; return; }
+    if (!reaction) {
+      activeMemoId = null;
+      const water = gameStore.takeWaterReminder();
+      if (water) { petWindow.showInactive(); broadcastState(); sendReaction(water); }
+      return;
+    }
     if (activeMemoId === reaction.memoId) return;
     activeMemoId = reaction.memoId;
     petWindow.showInactive();
@@ -354,4 +377,5 @@ app.on('before-quit', () => {
   globalShortcut.unregisterAll();
   gameStore?.save();
 });
+
 

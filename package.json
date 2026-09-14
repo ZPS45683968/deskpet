@@ -10,8 +10,8 @@
     "dev": "electron . --dev",
     "test": "node --test",
     "smoke": "electron . --smoke-test",
-    "pack": "electron-builder --dir",
-    "dist": "electron-builder --win nsis portable"
+    "pack": "node --max-old-space-size=8192 node_modules/electron-builder/cli.js --dir",
+    "dist": "node --max-old-space-size=8192 node_modules/electron-builder/cli.js --win nsis portable"
   },
   "devDependencies": {
     "electron": "^38.1.0",

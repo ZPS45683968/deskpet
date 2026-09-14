@@ -107,10 +107,21 @@ function renderDiary() {
     }).join('')}</div>`;
 }
 
+function renderEndedMemo(memo) {
+  const id = escapeHtml(memo.id);
+  return `<article class="memo-entry memo-compact">
+    <p title="${escapeHtml(memo.text)}">${escapeHtml(memo.text)}</p>
+    <div class="memo-compact-actions">
+      <button class="memo-icon-button" data-edit-memo="${id}" title="重新安排" aria-label="重新安排备忘"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 10a9 9 0 1 1 2 8M3 4v6h6"/></svg></button>
+      <button class="memo-icon-button memo-delete" data-command="delete-memo" data-id="${id}" title="删除" aria-label="删除备忘"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13M10 11v5M14 11v5"/></svg></button>
+    </div>
+  </article>`;
+}
+
 function renderMemos() {
   const rows = [...state.memos].sort((a, b) => a.completed - b.completed || a.remindAt - b.remindAt);
   const ended = m => m.completed || (m.notified && !m.awaitingAck);
-  const section = (title, items, finished = false) => `<section class="memo-group ${finished ? 'memo-ended' : 'memo-pending'}"><div class="section-title"><h2>${title}</h2><p>${items.length} 条</p></div>${items.map(m => `<article class="card card-pad memo-entry"><p>${escapeHtml(m.text)}</p><div class="memo-repeat">${repeatLabels[m.repeat] || '不重复'}</div><time>事项：${new Date(m.eventAt).toLocaleString('zh-CN')}<br>提醒：${new Date(m.remindAt).toLocaleString('zh-CN')}</time><div class="button-row"><strong class="memo-status">${finished ? '✓ 已结束' : m.awaitingAck ? '🔔 提醒中 · 等待确认' : '◷ 待提醒'}</strong><button class="secondary" data-edit-memo="${escapeHtml(m.id)}">${finished ? '重新安排' : '编辑'}</button>${finished ? '' : `<button class="small-button" data-command="complete-memo" data-id="${escapeHtml(m.id)}">${m.awaitingAck ? '结束提醒' : '完成'}</button>`}${!finished && m.repeat !== 'none' ? `<button class="secondary" data-command="stop-memo" data-id="${escapeHtml(m.id)}">停止重复</button>` : ''}<button class="secondary" data-command="delete-memo" data-id="${escapeHtml(m.id)}">删除</button></div></article>`).join('') || '<div class="empty">暂无备忘</div>'}</section>`;
+  const section = (title, items, finished = false) => `<section class="memo-group ${finished ? 'memo-ended' : 'memo-pending'}"><div class="section-title"><h2>${title}</h2><p>${items.length} 条</p></div>${items.map(m => finished ? renderEndedMemo(m) : `<article class="card card-pad memo-entry"><p>${escapeHtml(m.text)}</p><div class="memo-repeat">${repeatLabels[m.repeat] || '不重复'}</div><time>事项：${new Date(m.eventAt).toLocaleString('zh-CN')}<br>提醒：${new Date(m.remindAt).toLocaleString('zh-CN')}</time><div class="button-row"><strong class="memo-status">${finished ? '✓ 已结束' : m.awaitingAck ? '🔔 提醒中 · 等待确认' : '◷ 待提醒'}</strong><button class="secondary" data-edit-memo="${escapeHtml(m.id)}">${finished ? '重新安排' : '编辑'}</button>${finished ? '' : `<button class="small-button" data-command="complete-memo" data-id="${escapeHtml(m.id)}">${m.awaitingAck ? '结束提醒' : '完成'}</button>`}${!finished && m.repeat !== 'none' ? `<button class="secondary" data-command="stop-memo" data-id="${escapeHtml(m.id)}">停止重复</button>` : ''}<button class="secondary" data-command="delete-memo" data-id="${escapeHtml(m.id)}">删除</button></div></article>`).join('') || '<div class="empty">暂无备忘</div>'}</section>`;
   return `<div class="memo-hero"><span>YOUR LITTLE ASSISTANT</span><h2>把小事交给竹宝</h2><p>记下计划，留心每一个重要时刻。</p></div>
     <details class="memo-composer" ${!rows.length || memoDraft.id || memoDraft.text ? 'open' : ''}><summary>＋ ${memoDraft.id ? '编辑备忘' : '新增备忘'}</summary><form id="memo-form" class="card card-pad memo-form">
       <div class="section-title"><h2>${memoDraft.id ? '编辑计划' : '新建计划'}</h2><p>提前 5 分钟提醒</p></div>
@@ -241,6 +252,7 @@ window.zhubaoDesktop.onPanelTab((tab) => {
 });
 
 window.zhubaoDesktop.getState().then((initialState) => { state = initialState; render(); });
+
 
 
 

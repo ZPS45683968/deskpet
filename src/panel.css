@@ -186,3 +186,35 @@ nav button.active { background: #dfe9d8; color: #315c43; font-weight: 700; }
 .memo-form .water-toggle input { width: auto; }
 .memo-composer > summary { cursor: pointer; list-style: none; border-radius: 12px; padding: 12px 16px; background: #456e50; color: #fff; font-size: 13px; font-weight: 600; }
 .memo-composer[open] > summary { margin-bottom: 10px; }
+.memo-ended .memo-compact {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 44px;
+  padding: 5px 8px 5px 14px;
+  margin-bottom: 6px;
+  border: 1px solid #e0e3da;
+  border-radius: 10px;
+  background: #eeefe9;
+  transition: background 120ms ease, border-color 120ms ease;
+}
+.memo-ended .memo-compact:hover { background: #f6f7f1; border-color: #ccd5c7; }
+.memo-ended .memo-compact > p {
+  flex: 1;
+  min-width: 0;
+  margin: 0;
+  color: #8a9585;
+  font-size: 13px;
+  line-height: 20px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-decoration: line-through;
+  text-decoration-color: #a6afa0;
+}
+.memo-compact-actions { display: flex; flex: none; gap: 2px; }
+.memo-icon-button { display: grid; place-items: center; width: 32px; height: 32px; padding: 7px; border: 0; border-radius: 7px; background: transparent; color: #778571; cursor: pointer; }
+.memo-icon-button svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; pointer-events: none; }
+.memo-icon-button:hover { background: #dfe8d8; color: #456e50; }
+.memo-delete:hover { background: #f4e3df; color: #ad6254; }
+.memo-icon-button:focus-visible { outline: 2px solid #719268; outline-offset: 1px; }
